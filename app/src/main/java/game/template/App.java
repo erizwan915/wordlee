@@ -72,7 +72,7 @@ public class App extends Application
         URL styleURL = getClass().getResource("/style.css");
         String stylesheet = styleURL.toExternalForm();
         scene.getStylesheets().add(stylesheet);
-        primaryStage.setTitle("GAME TEMPLATE");
+        primaryStage.setTitle("WORDLE");
         primaryStage.setScene(scene);
         primaryStage.show();
 

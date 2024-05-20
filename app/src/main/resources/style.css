@@ -11,9 +11,9 @@
 
 .root{
     -fx-font-size: 16pt;
-    -fx-font-family: "Courier New";
-    -fx-background: rgb(225, 228, 203);
-    -fx-base: rgb(132, 145, 47);
+    -fx-font-family: "Franklin Gothic Medium";
+    -fx-background: rgb(255, 255, 255);
+    -fx-base: rgb(255, 255, 255);
 }
 
 .button{
@@ -32,21 +32,22 @@
 
 .grid-pane {
     -fx-padding: 5;
-    -fx-border-color: black;
+    -fx-border-color: rgb(132, 134, 137);
     -fx-border-width: 2;
-    -fx-hgap: 1; /* Horizontal gap between cells */
-    -fx-vgap: 1; /* Vertical gap between cells */
+    -fx-hgap: 5; /* Horizontal gap between cells */
+    -fx-vgap: 5; /* Vertical gap between cells */
 }
 
 .grid-pane .text-field {
     -fx-font-size: 40;
-    -fx-font-family: "Courier New";
+    -fx-font-family: "Franklin Gothic Medium";
+    -fx-font-weight: bold;
     -fx-max-width: 80;
     -fx-max-height: 80;
     -fx-min-width: 80;
     -fx-min-height: 80;
-    -fx-border-color: lightgray; /* Default light borders for all cells */
-    -fx-border-width: 0.5; /* Thinner borders within subgrids */
+    -fx-border-color: rgb(212, 214, 218); /* Default light borders for all cells */
+    -fx-border-width: 2.5; /* Thinner borders within subgrids */
 }
 
 .text-field-selected {
