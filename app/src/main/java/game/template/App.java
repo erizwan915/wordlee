@@ -11,16 +11,19 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.text.Font;
 
 public class App extends Application
 {
     private static final int NUM_ROWS = 6;
     private static final int NUM_COLS = 5;
     private VBox root;
-    private TextField[][] textFields = new TextField[NUM_ROWS][NUM_COLS];
+    private TextField[][] textFields = new TextField[NUM_ROWS+1][NUM_COLS];
+    private Label[][] labels = new Label[NUM_ROWS+1][NUM_COLS];
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -32,8 +35,25 @@ public class App extends Application
         GridPane gridPane = new GridPane();
         root.getChildren().add(gridPane);
         gridPane.getStyleClass().add("grid-pane");
+        
+        TextField wordguess = new TextField();
+        gridPane.add(wordguess, 0, 0, 5, 1);
 
-        for (int row = 0; row < NUM_ROWS; row++)
+        int guessCount = 0;
+        for (int row = 1; row < NUM_ROWS; row++)
+        {
+            for (int col = 0; col < NUM_COLS; col++)
+            {
+                labels[row][col] = new Label("A");
+                Label label = labels[row][col];
+                
+                // 6 rows, 5 columns for WORDLE
+                label.setId(row + "-" + col);
+                gridPane.add(label, col, row);
+            }
+        }
+
+        /*for (int row = 1; row < NUM_ROWS; row++)
         {
             for (int col = 0; col < NUM_COLS; col++)
             {
@@ -44,7 +64,7 @@ public class App extends Application
                 textField.setId(row + "-" + col);
                 gridPane.add(textField, col, row);
             }
-        }
+        }*/
 
         root.setOnKeyPressed(event -> {
             System.out.println("Key pressed: " + event.getCode());

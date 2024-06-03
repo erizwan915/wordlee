@@ -9,6 +9,14 @@
     -fx-base: rgb(255, 255, 255);
 }
 
+.label-menu-item .label{
+   -fx-text-alignment:center; 
+}
+
+.label-menu-item .label .text{
+   -fx-text-alignment:center; 
+}
+
 .root{
     -fx-font-size: 16pt;
     -fx-font-family: "Franklin Gothic Medium";
@@ -34,18 +42,33 @@
     -fx-padding: 5;
     -fx-border-color: rgb(132, 134, 137);
     -fx-border-width: 2;
+    -fx-max-width: 90;
     -fx-hgap: 5; /* Horizontal gap between cells */
     -fx-vgap: 5; /* Vertical gap between cells */
 }
 
 .grid-pane .text-field {
-    -fx-font-size: 40;
+    -fx-font-size: 35;
     -fx-font-family: "Franklin Gothic Medium";
     -fx-font-weight: bold;
-    -fx-max-width: 80;
-    -fx-max-height: 80;
-    -fx-min-width: 80;
-    -fx-min-height: 80;
+    -fx-letter-spacing: 10;
+    -fx-max-height: 90;
+    -fx-min-width: 90;
+    -fx-min-height: 90;
+    -fx-border-color: rgb(212, 214, 218); /* Default light borders for all cells */
+    -fx-border-width: 2.5; /* Thinner borders within subgrids */
+}
+
+.grid-pane .label {
+    -fx-font-size: 35;
+    -fx-font-family: "Franklin Gothic Medium";
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 2;
+    -fx-alignment: center;
+    -fx-max-width: 90;
+    -fx-max-height: 90;
+    -fx-min-width: 90;
+    -fx-min-height: 90;
     -fx-border-color: rgb(212, 214, 218); /* Default light borders for all cells */
     -fx-border-width: 2.5; /* Thinner borders within subgrids */
 }

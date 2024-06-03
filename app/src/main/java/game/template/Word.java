@@ -17,6 +17,7 @@ public class Word {
     public Word() {
         wordList = new ArrayList<>();
         possibleGuesses = new ArrayList<>();
+        createWord();
 
     }
 
