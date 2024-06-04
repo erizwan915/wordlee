@@ -1907,6 +1907,7 @@ crags
 craic
 craig
 crake
+crane
 crame
 crams
 crans
@@ -6881,6 +6882,7 @@ pizes
 plaas
 plack
 plage
+plane
 plans
 plaps
 plash
