@@ -119,9 +119,6 @@ public class App extends Application
                     String[] wordGuessed = board.inputGuess(guessCount, wordguess.getText());
                     guessCount++;
 
-                    // remove focus from the textfields by giving it to the root VBox
-                    root.requestFocus();
-
                     // clear the textfield
                     wordguess.clear();
                   
@@ -163,14 +160,14 @@ public class App extends Application
                         alert.showAndWait();
                     }
 
-                    // input the guess into the board
-
-                    // check if the guess is valid
-                    // check if the guess is the target word
-                    // check if the guess is in the list of possible guesses
-                    // check if the guess is 5 characters long
-                    // check if the guess is in the list of guesses
-
+                    if (wordGuessed.equals(TARGET_WORD)) {
+                        // Create an alert that says you've guessed the word
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Congratulations!");
+                        alert.setHeaderText(null);
+                        alert.setContentText("You've guessed the word correctly!");
+                        alert.showAndWait();
+                    }
                     
                     System.out.println("You pressed ENTER key");
                     break;
