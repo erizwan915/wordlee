@@ -1,15 +1,16 @@
 package game.template;
-import java.util.Stack;
 
-import javafx.scene.control.Tab;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.Stack;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Board {
     private String[][] board;
@@ -19,7 +20,6 @@ public class Board {
     private List<String> possibleGuesses;
     private String word;
     private List<String> wordyList;
-
 
     public Board() {
         board = new String[6][5];
@@ -31,15 +31,15 @@ public class Board {
 
     public String createWord(InputStream in) {
         Scanner scanner = new Scanner(in);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                wordyList.add(line);
-            }
-            scanner.close();
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            wordyList.add(line);
+        }
+        scanner.close();
 
-            int randomID = new Random().nextInt(wordyList.size());
-            word = wordyList.get(randomID);
-            return word;
+        int randomID = new Random().nextInt(wordyList.size());
+        word = wordyList.get(randomID);
+        return word;
     }
 
     public void loadWords(InputStream in) {
@@ -52,7 +52,7 @@ public class Board {
     }
 
     public boolean wordExists(String potentialWord) {
-        try{
+        try {
             loadWords(new FileInputStream("datafiles/possiblewords.txt"));
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
@@ -78,34 +78,28 @@ public class Board {
         if (guess.length() != 5) {
             throw new IllegalArgumentException("Guess must be 5 characters long");
         }
-       /*  if (!(wordExists(guess) && guessList.size() < NUM_GUESSES)) {
-
-            throw new IllegalArgumentException("Value " + guess + " not possible cell");
-        }*/
-
-        guessList.add(guess);
-        String[] arrOfStr = guess.split("");
-        for (int i = 0; i < 5; i++) {
-            board[row][i] = arrOfStr[i].toUpperCase();
-            System.out.println(board[row][i]);
+        
+        if (!wordExists(guess)) {
+            throw new IllegalArgumentException("The word does not exist in the possible guesses list.");
         }
-
-        return arrOfStr;
-
-
-        /* 
-        // based on other values in the sudoku grid
-        int previousValue = board[row][col];
-        board[row][col] = value;
-
-        // Push the move onto the stack
-        moveStack.push(new Move(row, col, previousValue));
-        if (newboard) {
-            valuesEntered.add(value);
-        }*/
+        if (guessList.size() >= NUM_GUESSES) {
+            throw new IllegalArgumentException("No more attempts allowed.");
+        }
+        else {
+            guessList.add(guess);
+            String[] arrOfStr = guess.split("");
+            for (int i = 0; i < 5; i++) {
+                board[row][i] = arrOfStr[i].toUpperCase();
+                System.out.println(board[row][i]);
+            }
+            return arrOfStr;
+        }
+        
     }
 
-    //check if the guess is correct 
+    
+
+    // Check if the guess is correct
     public boolean[] isCorrect(String[] guess, String target) {
         boolean[] correct = new boolean[]{false, false, false, false, false};
         String[] targetArr = target.split("");
@@ -117,7 +111,7 @@ public class Board {
         return correct;
     }
 
-    // checks if any of the letters in the guess are in the target word regardless of position
+    // Checks if any of the letters in the guess are in the target word regardless of position
     public boolean[] isCorrectButWrongSpot(String[] guess, String target) {
         boolean[] correct = new boolean[]{false, false, false, false, false};
         target = target.toLowerCase();
@@ -130,12 +124,77 @@ public class Board {
         return correct;
     }
 
-
-
     public Board getBoard() {
         return this;
     }
 
+
+    public List<String> displayInitialHint() {
+        if (guessList.size() > 0) {
+            throw new IllegalArgumentException("You have already used the initial hint available.");
+        }
+        else {
+            return getRandomWords(wordyList, 10);
+        }
+        
+        
+    }
+
+    public List<String> displayHintWithGuesses() {
+        
+            System.out.println("Possible words to try:");
+            List<String> possibleWords = wordyList.stream()
+                    .filter(word -> !guessList.contains(word))
+                    .collect(Collectors.toList());
+            List<String> randomWords = getRandomWords(possibleWords, 10);
+            return randomWords;
+        
+       
+    }
+
+    public String displayLetterHint() {
+        if (guessList.size() <3) {
+            throw new IllegalArgumentException("You have not made any guesses yet.");
+        }
+        else{
+            Set<Character> guessedLetters = new HashSet<>();
+            for (String attempt : guessList) {
+                for (char c : attempt.toCharArray()) {
+                    guessedLetters.add(c);
+                }
+            }
+    
+            for (char c : word.toCharArray()) {
+                if (!guessedLetters.contains(c)) {
+                    String message = "The letter "+c+" is in the word.";
+                    return message;
+                }
+            }
+        }
+        return null;
+              
+    }
+
+    private List<String> getRandomWords(List<String> words, int count) {
+        List<String> copy = new ArrayList<>(words);
+        List<String> randomWords = new ArrayList<>();
+        Random rand = new Random();
+        for (int i = 0; i < count && !copy.isEmpty(); i++) {
+            int randomIndex = rand.nextInt(copy.size());
+            randomWords.add(copy.remove(randomIndex));
+        }
+        return randomWords;
+    }
+
+    public boolean isCorrect(String attempt) {
+        return attempt.equals(word);
+    }
+
+    public void printAttempts() {
+        System.out.println("Guesses made so far: " + guessList);
+    }
+
+    
     public static void main(String[] args) {
         Board board = new Board();
         String[] guess1 = board.inputGuess(0, "CRANE");

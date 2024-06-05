@@ -15,12 +15,14 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
+import java.util.List;
 
 public class App extends Application
 {
@@ -33,7 +35,8 @@ public class App extends Application
     private int guessCount = 0;
     private File wordlist = new File("../datafiles/wordlist.txt");
     private final String TARGET_WORD;
-
+    private List<String> startlist;
+    //private List<String> possiblelist;
     public App() throws FileNotFoundException {
         TARGET_WORD = board.createWord(new FileInputStream(wordlist)).toUpperCase();
     }
@@ -65,18 +68,7 @@ public class App extends Application
             }
         }
 
-        /*for (int row = 1; row < NUM_ROWS; row++)
-        {
-            for (int col = 0; col < NUM_COLS; col++)
-            {
-                textFields[row][col] = new TextField();
-                TextField textField = textFields[row][col];
-                
-                // 6 rows, 5 columns for WORDLE
-                textField.setId(row + "-" + col);
-                gridPane.add(textField, col, row);
-            }
-        }*/
+        
 
         root.setOnKeyPressed(event -> {
             System.out.println("Key pressed: " + event.getCode());
@@ -209,6 +201,66 @@ public class App extends Application
         });
 
         menuBar.getMenus().add(fileMenu);
+
+        Menu HintMenu = new Menu("Hint");
+        addMenuItem(HintMenu, "Get Me Started!", () -> {
+            
+            try {                
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Some words to get you started!");
+                alert.setHeaderText(null);
+                alert.setContentText(String.join("\n", board.displayInitialHint()));
+                alert.showAndWait();
+
+            } catch (IllegalArgumentException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Initial Hint Error");
+                alert.setHeaderText(null);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+            
+        });
+
+        addMenuItem(HintMenu, "Give Me a Possible List of Values", () -> {
+             
+            try {                
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Here's some more words!");
+                alert.setHeaderText(null);
+                alert.setContentText(String.join("\n", board.displayHintWithGuesses()));
+                alert.showAndWait();
+
+            } catch (IllegalArgumentException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Hint Error");
+                alert.setHeaderText(null);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+            
+        });
+
+        addMenuItem(HintMenu, "Give Me a Letter Hint!", () -> {
+
+            try {                
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Here's some more words!");
+                alert.setHeaderText(null);
+                alert.setContentText(board.displayLetterHint());
+                alert.showAndWait();
+
+            } catch (IllegalArgumentException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Hint Error");
+                alert.setHeaderText(null);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+            
+        });
+        menuBar.getMenus().add(HintMenu);
+
 
         return menuBar;
     }

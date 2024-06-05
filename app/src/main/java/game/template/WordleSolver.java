@@ -41,6 +41,7 @@ public class WordleSolver {
             displayLetterHint();
         }
     }
+    
 
     private void displayInitialHint() {
         System.out.println("Possible words to try:");
