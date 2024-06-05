@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WordleSolver {
     private Word wordGenerator;
@@ -32,30 +33,50 @@ public class WordleSolver {
     }
 
     public void giveHint() {
-        if (attempts.size() < 3) {
-            System.out.println("Possible words to try:");
-            List<String> wordList = wordGenerator.wordList;
-            List<String> randomWords = getRandomWords(wordList, 10);
-            for (String word : randomWords) {
-                System.out.println(word);
-            }
+        if (attempts.size() == 0) {
+            displayInitialHint();
+        } else if (attempts.size() < 3) {
+            displayHintWithGuesses();
         } else {
-            Set<Character> guessedLetters = new HashSet<>();
-            for (String attempt : attempts) {
-                for (char c : attempt.toCharArray()) {
-                    guessedLetters.add(c);
-                }
-            }
-
-            for (char c : correctWord.toCharArray()) {
-                if (!guessedLetters.contains(c)) {
-                    System.out.println("Hint: The word contains the letter '" + c + "'");
-                    return;
-                }
-            }
-
-            System.out.println("No new hints available.");
+            displayLetterHint();
         }
+    }
+
+    private void displayInitialHint() {
+        System.out.println("Possible words to try:");
+        List<String> randomWords = getRandomWords(wordGenerator.wordList, 10);
+        for (String word : randomWords) {
+            System.out.println(word);
+        }
+    }
+
+    private void displayHintWithGuesses() {
+        System.out.println("Possible words to try:");
+        List<String> possibleWords = wordGenerator.wordList.stream()
+                .filter(word -> !attempts.contains(word))
+                .collect(Collectors.toList());
+        List<String> randomWords = getRandomWords(possibleWords, 10);
+        for (String word : randomWords) {
+            System.out.println(word);
+        }
+    }
+
+    private void displayLetterHint() {
+        Set<Character> guessedLetters = new HashSet<>();
+        for (String attempt : attempts) {
+            for (char c : attempt.toCharArray()) {
+                guessedLetters.add(c);
+            }
+        }
+
+        for (char c : correctWord.toCharArray()) {
+            if (!guessedLetters.contains(c)) {
+                System.out.println("Hint: The word contains the letter '" + c + "'");
+                return;
+            }
+        }
+
+        System.out.println("No new hints available.");
     }
 
     private List<String> getRandomWords(List<String> words, int count) {
@@ -73,6 +94,10 @@ public class WordleSolver {
         return attempt.equals(correctWord);
     }
 
+    public void printAttempts() {
+        System.out.println("Guesses made so far: " + attempts);
+    }
+
     public static void main(String[] args) {
         WordleSolver solver = new WordleSolver();
         Scanner scanner = new Scanner(System.in);
@@ -81,6 +106,7 @@ public class WordleSolver {
             System.out.println("Enter your attempt:");
             String attempt = scanner.nextLine();
             solver.makeAttempt(attempt);
+            solver.printAttempts();
 
             if (solver.isCorrect(attempt)) {
                 System.out.println("Congratulations! You've guessed the correct word.");
