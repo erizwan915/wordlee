@@ -73,6 +73,24 @@
     -fx-border-width: 2.5; /* Thinner borders within subgrids */
 }
 
+.correct-label {
+    -fx-border-color: rgb(105, 171, 100);
+    -fx-background-color: rgb(105, 171, 100);
+    -fx-text-fill: rgb(255, 255, 255);
+}
+
+.correct-wrong-spot-label{
+    -fx-border-color: rgb(201, 180, 87);
+    -fx-background-color: rgb(201, 180, 87);
+    -fx-text-fill: rgb(255, 255, 255);
+}
+
+.incorrect-label {
+    -fx-border-color: rgb(120, 124, 127);
+    -fx-background-color: rgb(120, 124, 127);
+    -fx-text-fill: rgb(255, 255, 255);
+}
+
 .text-field-selected {
     -fx-background-color: rgb(147, 155, 221);
 }

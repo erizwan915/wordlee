@@ -3,6 +3,9 @@
  */
 package game.template;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 
 import javafx.application.Application;
@@ -11,19 +14,29 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
 
 public class App extends Application
 {
-    private static final int NUM_ROWS = 6;
+    private static final int NUM_ROWS = 7;
     private static final int NUM_COLS = 5;
     private VBox root;
     private TextField[][] textFields = new TextField[NUM_ROWS+1][NUM_COLS];
     private Label[][] labels = new Label[NUM_ROWS+1][NUM_COLS];
+    private Board board = new Board();
+    private int guessCount = 0;
+    private File wordlist = new File("../datafiles/wordlist.txt");
+    private final String TARGET_WORD;
+
+    public App() throws FileNotFoundException {
+        TARGET_WORD = board.createWord(new FileInputStream(wordlist)).toUpperCase();
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -39,12 +52,11 @@ public class App extends Application
         TextField wordguess = new TextField();
         gridPane.add(wordguess, 0, 0, 5, 1);
 
-        int guessCount = 0;
         for (int row = 1; row < NUM_ROWS; row++)
         {
             for (int col = 0; col < NUM_COLS; col++)
             {
-                labels[row][col] = new Label("A");
+                labels[row][col] = new Label("");
                 Label label = labels[row][col];
                 
                 // 6 rows, 5 columns for WORDLE
@@ -77,6 +89,89 @@ public class App extends Application
                     System.out.println("You pressed ESC key");
                     break;
                 case ENTER:
+
+                    //FileChooser fileChooser = new FileChooser();
+                    //fileChooser.setInitialDirectory(new File("../datafiles/possiblewords.txt"));
+                    File wordFile = new File("../datafiles/possiblewords.txt");
+                    //fileChooser.showOpenDialog(primaryStage);
+                    boolean wordExists = false;
+                    if (wordFile != null) {
+                        try {
+                            wordExists = board.wordExists(new FileInputStream(wordFile), wordguess.getText());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if(wordguess.getText().length() != 5) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Invalid Guess");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Guess must be 5 characters long");
+                        alert.showAndWait();
+                        throw new IllegalArgumentException("Guess must be 5 characters long");
+                        
+
+                    }
+                    if(!(wordExists && guessCount <= 6)) {
+                        throw new IllegalArgumentException("Value " + wordguess.getText() + " not possible cell");
+                    }
+                    String[] wordGuessed = board.inputGuess(guessCount, wordguess.getText());
+                    guessCount++;
+
+                    // remove focus from the textfields by giving it to the root VBox
+                    root.requestFocus();
+
+                    // clear the textfield
+                    wordguess.clear();
+                  
+                    for (int col = 0; col < NUM_COLS; col++)
+                    {    
+                        labels[guessCount][col].setText(wordGuessed[col].toUpperCase());
+
+                    }
+
+                    boolean[] greenSpots = board.isCorrect(wordGuessed, TARGET_WORD);
+                    boolean[] yellowSpots = board.isCorrectButWrongSpot(wordGuessed, TARGET_WORD);
+                    
+                    for (int col = 0; col < NUM_COLS; col++) {
+                        System.out.println(wordGuessed[col]);
+                        System.out.println(greenSpots[col]);
+                        System.out.println(yellowSpots[col]);
+                        
+                    }
+
+                    for (int col = 0; col < NUM_COLS; col++) {
+                        if (greenSpots[col]) {
+                            labels[guessCount][col].getStyleClass().add("correct-label");
+                        } else if (yellowSpots[col]) {
+                            labels[guessCount][col].getStyleClass().add("correct-wrong-spot-label");
+                        }
+                        else{
+                            labels[guessCount][col].getStyleClass().add("incorrect-label");
+                        }
+                    }
+
+                    System.out.println(TARGET_WORD);
+
+                    if (guessCount == 6) {
+                        // Create an alert that says you've ran out of guesses
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Out of Guesses");
+                        alert.setHeaderText(null);
+                        alert.setContentText("You've ran out of guesses! The word was: " + TARGET_WORD);
+                        alert.showAndWait();
+                    }
+
+                    // input the guess into the board
+
+                    // check if the guess is valid
+                    // check if the guess is the target word
+                    // check if the guess is in the list of possible guesses
+                    // check if the guess is 5 characters long
+                    // check if the guess is in the list of guesses
+
+                    
                     System.out.println("You pressed ENTER key");
                     break;
                 default:
