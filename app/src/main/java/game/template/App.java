@@ -23,6 +23,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
 import java.util.List;
+import java.util.ArrayList;
 
 public class App extends Application
 {
@@ -36,6 +37,7 @@ public class App extends Application
     private File wordlist = new File("../datafiles/wordlist.txt");
     private final String TARGET_WORD;
     private List<String> startlist;
+    private List<String> moveList = new ArrayList<>();
     //private List<String> possiblelist;
     public App() throws FileNotFoundException {
         TARGET_WORD = board.createWord(new FileInputStream(wordlist)).toUpperCase();
@@ -111,6 +113,16 @@ public class App extends Application
                     String[] wordGuessed = board.inputGuess(guessCount, wordguess.getText());
                     guessCount++;
 
+
+                    if (wordguess.getText().toLowerCase().equals(TARGET_WORD.toLowerCase())) {
+                        // Create an alert that says you've guessed the word
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Congratulations!");
+                        alert.setHeaderText(null);
+                        alert.setContentText("You've guessed the word correctly!");
+                        alert.showAndWait();
+                    }
+
                     // clear the textfield
                     wordguess.clear();
                   
@@ -152,14 +164,6 @@ public class App extends Application
                         alert.showAndWait();
                     }
 
-                    if (wordGuessed.equals(TARGET_WORD)) {
-                        // Create an alert that says you've guessed the word
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Congratulations!");
-                        alert.setHeaderText(null);
-                        alert.setContentText("You've guessed the word correctly!");
-                        alert.showAndWait();
-                    }
                     
                     System.out.println("You pressed ENTER key");
                     break;
@@ -198,6 +202,26 @@ public class App extends Application
 
         addMenuItem(fileMenu, "Load from file", () -> {
             System.out.println("Load from file");
+        });
+
+        addMenuItem(fileMenu, "Undo", () -> {
+            System.out.println("Undo move");
+            for(int col = 0; col < NUM_COLS; col++){
+                moveList.add(labels[guessCount][col].getText());
+                labels[guessCount][col].getStyleClass().remove("incorrect-label");
+                labels[guessCount][col].getStyleClass().remove("correct-label");
+                labels[guessCount][col].getStyleClass().remove("correct-wrong-spot-label");
+                labels[guessCount][col].setText("");
+            }
+            guessCount--;
+        });
+
+        addMenuItem(fileMenu, "Redo last move", () -> {
+            System.out.println("Redo Last move");
+            guessCount++;
+            for(int col = 0; col < NUM_COLS; col++){
+                labels[guessCount][col].setText(moveList.get(col));
+            }
         });
 
         menuBar.getMenus().add(fileMenu);
